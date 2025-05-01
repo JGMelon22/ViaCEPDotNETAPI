@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using ViaCepDotNetAPI.Domains.Enums;
 
 namespace ViaCepDotNetAPI.Domains.Dtos;

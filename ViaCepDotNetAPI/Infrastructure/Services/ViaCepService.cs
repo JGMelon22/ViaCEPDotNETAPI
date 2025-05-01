@@ -29,7 +29,8 @@ public class ViaCepService : IViaCepService
         {
             JsonSerializerOptions options = new()
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters = { new JsonStringEnumConverter() }
             };
 
             options.Converters.Add(new JsonStringEnumConverter());

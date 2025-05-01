@@ -1,7 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
+using ViaCepDotNetAPI.Domains.Dtos;
 using ViaCepDotNetAPI.Domains.Entities;
+using ViaCepDotNetAPI.Domains.Mappings;
 using ViaCepDotNetAPI.Domains.Shared;
 using ViaCepDotNetAPI.Infrastructure.Configurations;
 using ViaCepDotNetAPI.Infrastructure.Services;
@@ -14,11 +15,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Configure<JsonOptions>(options =>
+builder.Services.ConfigureHttpJsonOptions(options =>
 {
-    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()); //null, allowIntegerValues: false));
 });
+
 
 builder.Services.Configure<ViaCepOptions>(options => builder.Configuration
         .GetSection("ViaCep")
@@ -46,9 +48,11 @@ app.MapGet("/viaCep", async (string cep, IViaCepService viaCepService) =>
     if (data is null)
         return Results.NotFound($"Location information for '{cep}' not found.");
 
+    Result<RootResponse>? mappedResponse = data.Data?.ToResponse();
+
     return data.IsSuccess
-        ? Results.Ok(data)
-        : Results.BadRequest(data);
+        ? Results.Ok(mappedResponse)
+        : Results.BadRequest(mappedResponse);
 })
 .WithName("GetAddressByCepAsync")
 .WithOpenApi();
