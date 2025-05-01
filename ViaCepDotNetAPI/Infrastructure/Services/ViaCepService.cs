@@ -11,20 +11,23 @@ namespace ViaCepDotNetAPI.Infrastructure.Services;
 public class ViaCepService : IViaCepService
 {
     private readonly string _baseUrl;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly HttpClient _httpClient;
     private ILogger<ViaCepService> _logger;
 
-    public ViaCepService(IOptions<ViaCepOptions> options, IHttpClientFactory httpClientFactory, ILogger<ViaCepService> logger)
+    public ViaCepService
+    (
+        IOptions<ViaCepOptions> options,
+        HttpClient httpClient,
+        ILogger<ViaCepService> logger
+    )
     {
         _baseUrl = options.Value.BaseUrl;
-        _httpClientFactory = httpClientFactory;
+        _httpClient = httpClient;
         _logger = logger;
     }
 
     public async Task<Result<Root?>> GetAddressByCepAsync(string cep)
     {
-        using HttpClient client = _httpClientFactory.CreateClient();
-
         try
         {
             JsonSerializerOptions options = new()
@@ -35,7 +38,7 @@ public class ViaCepService : IViaCepService
 
             options.Converters.Add(new JsonStringEnumConverter());
 
-            Root? data = await client.GetFromJsonAsync<Root>(
+            Root? data = await _httpClient.GetFromJsonAsync<Root>(
                 $"{_baseUrl}{cep}/json", options);
 
             return data != null

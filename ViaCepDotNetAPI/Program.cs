@@ -1,13 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using ViaCepDotNetAPI.Domains.Dtos;
-using ViaCepDotNetAPI.Domains.Entities;
-using ViaCepDotNetAPI.Domains.Mappings;
-using ViaCepDotNetAPI.Domains.Shared;
 using ViaCepDotNetAPI.Endpoints;
+using ViaCepDotNetAPI.Extensions;
 using ViaCepDotNetAPI.Infrastructure.Configurations;
-using ViaCepDotNetAPI.Infrastructure.Services;
-using ViaCepDotNetAPI.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,14 +17,11 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()); //null, allowIntegerValues: false));
 });
 
-
 builder.Services.Configure<ViaCepOptions>(options => builder.Configuration
         .GetSection("ViaCep")
         .Bind(options));
 
-builder.Services.AddHttpClient();
-
-builder.Services.AddScoped<IViaCepService, ViaCepService>();
+builder.Services.AddViaCepClient();
 
 var app = builder.Build();
 
