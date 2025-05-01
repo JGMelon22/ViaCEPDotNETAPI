@@ -1,7 +1,10 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using ViaCepDotNetAPI.Domains.Infrastructure.Configurations;
+using ViaCepDotNetAPI.Domains.Entities;
+using ViaCepDotNetAPI.Infrastructure.Configurations;
+using ViaCepDotNetAPI.Infrastructure.Services;
+using ViaCepDotNetAPI.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,10 @@ builder.Services.Configure<ViaCepOptions>(options => builder.Configuration
         .GetSection("ViaCep")
         .Bind(options));
 
+builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<IViaCepService, ViaCepService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,29 +38,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/viaCep", async (string cep, IViaCepService viaCepService) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    Root result = await viaCepService.GetAddressByCepAsync(cep);
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    return result is null
+        ? Results.BadRequest("Invalid CEP or not found.")
+        : Results.Ok(result);
 })
-.WithName("GetWeatherForecast")
+.WithName("GetAddressByCepAsync")
 .WithOpenApi();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

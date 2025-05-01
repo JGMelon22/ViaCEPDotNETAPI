@@ -1,4 +1,4 @@
-namespace ViaCepDotNetAPI.Domains.Infrastructure.Configurations;
+namespace ViaCepDotNetAPI.Infrastructure.Configurations;
 
 public sealed class ViaCepOptions
 {
