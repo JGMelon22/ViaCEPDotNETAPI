@@ -1,0 +1,6 @@
+@ViaCepDotNetAPI_HostAddress = http://localhost:5073
+
+GET {{ViaCepDotNetAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
