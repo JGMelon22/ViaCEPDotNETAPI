@@ -4,6 +4,7 @@ using ViaCepDotNetAPI.Domains.Dtos;
 using ViaCepDotNetAPI.Domains.Entities;
 using ViaCepDotNetAPI.Domains.Mappings;
 using ViaCepDotNetAPI.Domains.Shared;
+using ViaCepDotNetAPI.Endpoints;
 using ViaCepDotNetAPI.Infrastructure.Configurations;
 using ViaCepDotNetAPI.Infrastructure.Services;
 using ViaCepDotNetAPI.Interfaces;
@@ -41,20 +42,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/viaCep", async (string cep, IViaCepService viaCepService) =>
-{
-    Result<Root?> data = await viaCepService.GetAddressByCepAsync(cep);
-
-    if (data is null)
-        return Results.NotFound($"Location information for '{cep}' not found.");
-
-    Result<RootResponse>? mappedResponse = data.Data?.ToResponse();
-
-    return data.IsSuccess
-        ? Results.Ok(mappedResponse)
-        : Results.BadRequest(mappedResponse);
-})
-.WithName("GetAddressByCepAsync")
-.WithOpenApi();
+app.MapCepRoutes();
 
 app.Run();
