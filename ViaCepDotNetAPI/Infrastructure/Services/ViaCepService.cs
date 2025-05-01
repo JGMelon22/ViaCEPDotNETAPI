@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
 using ViaCepDotNetAPI.Domains.Entities;
 using ViaCepDotNetAPI.Domains.Shared;
@@ -38,8 +39,10 @@ public class ViaCepService : IViaCepService
 
             options.Converters.Add(new JsonStringEnumConverter());
 
+            string normalizedCep = NormalizeCepInputFormat(cep);
+
             Root? data = await _httpClient.GetFromJsonAsync<Root>(
-                $"{_baseUrl}{cep}/json", options);
+                $"{_baseUrl}{normalizedCep}/json", options);
 
             return data != null
                 ? Result<Root?>.Success(data)
@@ -52,4 +55,7 @@ public class ViaCepService : IViaCepService
             return Result<Root?>.Failure("An error occurred while fetching CEP information.");
         }
     }
+
+    private static string NormalizeCepInputFormat(string cep)
+        => Regex.Replace(cep, @"\s+", "").Replace("-", "").Replace(".", "");
 }
