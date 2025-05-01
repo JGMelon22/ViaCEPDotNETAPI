@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
 using ViaCepDotNetAPI.Domains.Entities;
+using ViaCepDotNetAPI.Domains.Shared;
 using ViaCepDotNetAPI.Infrastructure.Configurations;
 using ViaCepDotNetAPI.Interfaces;
 
@@ -20,7 +21,7 @@ public class ViaCepService : IViaCepService
         _logger = logger;
     }
 
-    public async Task<Root> GetAddressByCepAsync(string cep)
+    public async Task<Result<Root?>> GetAddressByCepAsync(string cep)
     {
         using HttpClient client = _httpClientFactory.CreateClient();
 
@@ -30,20 +31,21 @@ public class ViaCepService : IViaCepService
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
-            
+
             options.Converters.Add(new JsonStringEnumConverter());
 
-            Root? root = await client.GetFromJsonAsync<Root>(
+            Root? data = await client.GetFromJsonAsync<Root>(
                 $"{_baseUrl}{cep}/json", options);
 
-            return root ?? null!;
+            return data != null
+                ? Result<Root?>.Success(data)
+                : Result<Root?>.Failure("Failed to deserialize response.");
         }
         catch (Exception ex)
         {
             _logger.LogError("Error getting address from ViaCep: {Error}", ex);
+
+            return Result<Root?>.Failure("An error occurred while fetching CEP information.");
         }
-
-        return null!;
     }
-
 }

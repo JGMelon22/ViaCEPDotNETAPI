@@ -1,8 +1,9 @@
 using ViaCepDotNetAPI.Domains.Entities;
+using ViaCepDotNetAPI.Domains.Shared;
 
 namespace ViaCepDotNetAPI.Interfaces;
 
 public interface IViaCepService
 {
-    Task<Root> GetAddressByCepAsync(string cep);
+    Task<Result<Root?>> GetAddressByCepAsync(string cep);
 }

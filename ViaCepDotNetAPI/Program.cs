@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using ViaCepDotNetAPI.Domains.Entities;
+using ViaCepDotNetAPI.Domains.Shared;
 using ViaCepDotNetAPI.Infrastructure.Configurations;
 using ViaCepDotNetAPI.Infrastructure.Services;
 using ViaCepDotNetAPI.Interfaces;
@@ -40,11 +41,14 @@ app.UseHttpsRedirection();
 
 app.MapGet("/viaCep", async (string cep, IViaCepService viaCepService) =>
 {
-    Root result = await viaCepService.GetAddressByCepAsync(cep);
+    Result<Root?> data = await viaCepService.GetAddressByCepAsync(cep);
 
-    return result is null
-        ? Results.BadRequest("Invalid CEP or not found.")
-        : Results.Ok(result);
+    if (data is null)
+        return Results.NotFound($"Location information for '{cep}' not found.");
+
+    return data.IsSuccess
+        ? Results.Ok(data)
+        : Results.BadRequest(data);
 })
 .WithName("GetAddressByCepAsync")
 .WithOpenApi();
