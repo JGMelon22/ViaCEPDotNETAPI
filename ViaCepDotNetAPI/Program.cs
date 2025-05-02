@@ -37,3 +37,5 @@ app.UseHttpsRedirection();
 app.MapCepRoutes();
 
 app.Run();
+
+public partial class Program { }
