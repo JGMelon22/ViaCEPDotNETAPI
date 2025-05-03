@@ -41,11 +41,11 @@ public class ViaCepService : IViaCepService
 
             string normalizedCep = NormalizeCepInputFormat(cep);
 
-            Root? data = await _httpClient.GetFromJsonAsync<Root>(
+            Root? address = await _httpClient.GetFromJsonAsync<Root>(
                 $"{_baseUrl}{normalizedCep}/json", options);
 
-            return data != null
-                ? Result<Root?>.Success(data)
+            return address != null
+                ? Result<Root?>.Success(address)
                 : Result<Root?>.Failure("Failed to deserialize response.");
         }
         catch (Exception ex)
@@ -57,5 +57,11 @@ public class ViaCepService : IViaCepService
     }
 
     private static string NormalizeCepInputFormat(string cep)
-        => Regex.Replace(cep, @"\s+", "").Replace("-", "").Replace(".", "");
+    {
+        if (!string.IsNullOrWhiteSpace(cep) && cep.All(char.IsDigit) && cep.Length == 8)
+            return cep;
+
+        else
+            return Regex.Replace(cep, @"[\s\-\.]", "");
+    }
 }
