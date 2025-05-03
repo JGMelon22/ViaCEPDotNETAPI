@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ViaCepDotNetAPI.csproj",
+                "${workspaceFolder}/ViaCepDotNetAPI.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/ViaCepDotNetAPI.csproj",
+                "${workspaceFolder}/ViaCepDotNetAPI.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/ViaCepDotNetAPI.csproj"
+                "${workspaceFolder}/ViaCepDotNetAPI.sln"
             ],
             "problemMatcher": "$msCompile"
         }

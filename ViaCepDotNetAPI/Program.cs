@@ -18,10 +18,12 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 builder.Services.Configure<ViaCepOptions>(options => builder.Configuration
-        .GetSection("ViaCep")
-        .Bind(options));
+    .GetSection("ViaCep")
+    .Bind(options));
 
 builder.Services.AddViaCepClient();
+
+builder.Services.RegisterOpenTelemetry(builder.Configuration);
 
 var app = builder.Build();
 
