@@ -41,6 +41,11 @@ public class ViaCepService : IViaCepService
 
             string normalizedCep = NormalizeCepInputFormat(cep);
 
+            // var teste = await _httpClient.GetAsync (
+            //     $"{_baseUrl}{normalizedCep}/json");
+            //
+            // var teste2 = await teste.Content.ReadAsStringAsync();
+            
             Root? data = await _httpClient.GetFromJsonAsync<Root>(
                 $"{_baseUrl}{normalizedCep}/json", options);
 

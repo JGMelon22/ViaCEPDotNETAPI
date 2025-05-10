@@ -25,27 +25,26 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebAppFactory>, 
         return Task.CompletedTask;
     }
 
-    protected void SetupViaCepApiMock(string cep, RootResponse response)
+    protected void SetupViaCepApiMock(string cep, string response)
     {
         Factory.WireMockServer
             .Given(
                 Request.Create()
-                    .WithPath($"{cep}/json")
-                    .WithParam("cep", cep)
+                    .WithPath($"/ws/{cep}/json")
                     .UsingGet())
             .RespondWith(
                 Response.Create()
                     .WithStatusCode(200)
                     .WithHeader("Content-Type", "application/json")
-                    .WithBodyAsJson(response));
+                    .WithBody(response));
     }
-    
+
     protected void SetupViaCepApiMockApiNotFound(string cep)
     {
         Factory.WireMockServer
             .Given(
                 Request.Create()
-                    .WithPath($"/{cep}/json")
+                    .WithPath($"/ws/{cep}/json")
                     .UsingGet())
             .RespondWith(
                 Response.Create()

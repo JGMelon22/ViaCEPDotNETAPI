@@ -11,17 +11,16 @@ public class CustomWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetim
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseSetting("ViaCep:BaseUrl:", $"{WireMockServer.Urls[0]}");
+        // Replace the configuration approach - don't use UseSetting, use ConfigureAppConfiguration
+        builder.ConfigureAppConfiguration((context, config) =>
+        {
+            Dictionary<string, string> testSettings = new()
+            {
+                { "ViaCep:BaseUrl", WireMockServer.Urls[0] + "/ws/"} // No trailing slash needed
+            };
 
-        // builder.ConfigureAppConfiguration((context, config) =>
-        // {
-        //     Dictionary<string, string> testSettings = new()
-        //     {
-        //         { "ViaCep:BaseUrl", WireMockServer.Urls[0] + "/" } // EX: http://localhost:port/
-        //     };
-        //
-        //     config.AddInMemoryCollection(testSettings!);
-        // });
+            config.AddInMemoryCollection(testSettings!);
+        });
     }
 
     public Task InitializeAsync()
@@ -30,9 +29,9 @@ public class CustomWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetim
         return Task.CompletedTask;
     }
 
-    public new Task DisposeAsync()
+    public new async Task DisposeAsync()
     {
         WireMockServer.Dispose();
-        return Task.CompletedTask;
+        await base.DisposeAsync();
     }
 }
