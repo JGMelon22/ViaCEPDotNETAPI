@@ -7,16 +7,15 @@ namespace ViaCepDotNetApi.IntegrationTests.Infrastructure;
 
 public class CustomWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    public WireMockServer WireMockServer { get; private set; }
+    public WireMockServer WireMockServer { get; private set; } = null!;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        // Replace the configuration approach - don't use UseSetting, use ConfigureAppConfiguration
         builder.ConfigureAppConfiguration((context, config) =>
         {
             Dictionary<string, string> testSettings = new()
             {
-                { "ViaCep:BaseUrl", WireMockServer.Urls[0] + "/ws/"} // No trailing slash needed
+                { "ViaCep:BaseUrl", WireMockServer.Urls[0] + "/ws/" }
             };
 
             config.AddInMemoryCollection(testSettings!);

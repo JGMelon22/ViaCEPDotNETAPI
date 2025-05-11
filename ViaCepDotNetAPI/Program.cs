@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()); //null, allowIntegerValues: false));
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 builder.Services.Configure<ViaCepOptions>(options => builder.Configuration

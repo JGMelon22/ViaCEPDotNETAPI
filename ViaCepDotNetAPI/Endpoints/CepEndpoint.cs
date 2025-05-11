@@ -11,7 +11,7 @@ public static class CepEndpoint
     public static void MapCepRoutes(this IEndpointRouteBuilder app)
     {
         app.MapGet("/viaCep", GetAddressAsync)
-            .WithName("GetAdddressInformationViaCep")
+            .WithName("GetAddressInformationViaCep")
             .WithOpenApi();
     }
 
@@ -19,13 +19,14 @@ public static class CepEndpoint
     {
         Result<Root?> data = await viaCepService.GetAddressByCepAsync(cep);
 
-        if (data is null)
+        if (!data.IsSuccess)
+            return Results.BadRequest(data.Message);
+
+        if (data.Data is null)
             return Results.NotFound($"Location information for '{cep}' not found.");
 
         Result<RootResponse>? mappedResponse = data.Data?.ToResponse();
 
-        return data.IsSuccess
-            ? Results.Ok(mappedResponse)
-            : Results.BadRequest(mappedResponse);
+        return Results.Ok(mappedResponse);
     }
 }

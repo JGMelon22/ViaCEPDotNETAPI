@@ -1,4 +1,3 @@
-using ViaCepDotNetAPI.Domains.Dtos;
 using WireMock.ResponseBuilders;
 using WireMock.RequestBuilders;
 
@@ -39,6 +38,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebAppFactory>, 
                     .WithBody(response));
     }
 
+    // TODO
     protected void SetupViaCepApiMockApiNotFound(string cep)
     {
         Factory.WireMockServer
