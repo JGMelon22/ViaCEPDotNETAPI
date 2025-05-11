@@ -22,7 +22,8 @@ public static class MappingExtensions
             Ibge = root.Ibge,
             Gia = root.Gia,
             Ddd = root.Ddd,
-            Siafi = root.Siafi
+            Siafi = root.Siafi,
+            Erro = root.Erro ?? "False"
         };
 
         return Result<RootResponse>.Success(response);

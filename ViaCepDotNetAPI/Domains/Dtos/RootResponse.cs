@@ -18,4 +18,5 @@ public record RootResponse
     public string Gia { get; init; } = string.Empty;
     public string Ddd { get; init; } = string.Empty;
     public string Siafi { get; init; } = string.Empty;
+    public string? Erro { get; set; }
 }

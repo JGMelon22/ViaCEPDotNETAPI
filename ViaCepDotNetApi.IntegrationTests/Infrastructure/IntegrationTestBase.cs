@@ -37,8 +37,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebAppFactory>, 
                     .WithHeader("Content-Type", "application/json")
                     .WithBody(response));
     }
-
-    // TODO
+    
     protected void SetupViaCepApiMockApiNotFound(string cep)
     {
         Factory.WireMockServer
@@ -50,6 +49,6 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebAppFactory>, 
                 Response.Create()
                     .WithStatusCode(200)
                     .WithHeader("Content-Type", "application/json")
-                    .WithBody("{}"));
+                    .WithBody("{\n  \"erro\": \"true\"\n}"));
     }
 }

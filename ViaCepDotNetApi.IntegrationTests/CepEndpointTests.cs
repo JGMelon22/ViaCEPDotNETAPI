@@ -59,11 +59,14 @@ public sealed class CepEndpointTests : IntegrationTestBase
         // Arrange
         string invalidCep = "99999999";
 
+        SetupViaCepApiMockApiNotFound(invalidCep);
+        
         // Act
         HttpResponseMessage response = await Client.GetAsync($"/viaCep?cep={invalidCep}");
 
         // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Contains("Location information for '99999999' not found.", await response.Content.ReadAsStringAsync());
     }
 
     [Fact]

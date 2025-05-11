@@ -17,15 +17,18 @@ public static class CepEndpoint
 
     private static async Task<IResult> GetAddressAsync(string cep, IViaCepService viaCepService)
     {
-        Result<Root?> data = await viaCepService.GetAddressByCepAsync(cep);
+        Result<Root?> address = await viaCepService.GetAddressByCepAsync(cep);
 
-        if (!data.IsSuccess)
-            return Results.BadRequest(data.Message);
+        if (!address.IsSuccess)
+            return Results.BadRequest(address.Message);
 
-        if (data.Data is null)
+        if (address.Data!.Erro == "true")
             return Results.NotFound($"Location information for '{cep}' not found.");
 
-        Result<RootResponse>? mappedResponse = data.Data?.ToResponse();
+        if (address.Data is null)
+            return Results.BadRequest(address.Message);
+
+        Result<RootResponse>? mappedResponse = address.Data?.ToResponse();
 
         return Results.Ok(mappedResponse);
     }
